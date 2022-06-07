@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Document</title>
+</head>
+
+<body>
+  <input type="text" id="msg" /><button onclick="send()">发送</button>
+  <script type="javascript" src="http://localhost/serve/socket.io/socket.io.js"></script>
+  <script>
+    // 客户端创建socket对象，并配置连接服务器url
+    var socket = io('http://localhost/serve')
+    // 监听服务端发送过来的数据
+    socket.on('message', function (data) {
+      console.log(data)
+    })
+    function send() {
+      socket.emit('message', document.getElementById('msg').value)
+    }
+  </script>
+</body>
+
+</html>

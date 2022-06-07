@@ -15,5 +15,9 @@ module.exports = {
         err(code, mes){
             console.log(`\x1B[41m${new Date().toString().slice(16,24)} ${0?__filename:"\b"} [ERR ${code}] ${mes}\x1B[0m`)
         }
+
+        mes(code, mes){
+            console.log(`\x1B[2m${new Date().toString().slice(16,24)} ${0?__filename:"\b"}\x1B[0m \x1B[32m[mess ${code}]\x1B[0m ${mes}`)
+        }
     }
 }
