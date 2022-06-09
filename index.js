@@ -1,5 +1,6 @@
 /** 自定义组件 */
 const sconsole = new (new require('./modules/sconsole').sconsole)("index.js")
+const sql = require('./modules/sql')
 
 
 
@@ -18,6 +19,12 @@ const io = require('socket.io')(server)
 
 /** 配置 */
 const config = require('./config.js')
+
+
+
+
+/** sql */
+sql.init()
 
 
 io.on('connection', socket => {
