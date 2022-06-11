@@ -23,16 +23,13 @@ function init(){
         return ;
     }
 
-    templates.templates.init.forEach((v,i,a)=>{
-        if(i==0){
-            return ;
-        }
+    templates.templates.init().forEach((v,i,a)=>{
         connection.query(v, (err, res)=>{
             if(!err){
                 sconsole.mes('000', '数据表更新成功')
-                return ;
+                return 
             }
-            sconsole.err('000', err);
+            sconsole.err('000', err)
         })
     })
 }
@@ -40,7 +37,17 @@ function init(){
 // 增
 //   用户注册
 function register(id, nickname, password){
-    
+    rets = []
+    templates.templates.register(id, nickname, password).forEach((v,i,a)=>{
+        connection.query(v, (err, res)=>{
+            if(!err){
+                rets.push(res)
+                return 
+            }
+            sconsole.err('000', err)
+        })
+    })
+    return rets
 }
 
 
