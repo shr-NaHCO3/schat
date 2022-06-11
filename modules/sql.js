@@ -8,6 +8,7 @@ const config = require('../config')
 
 let connection = mysql.createConnection({
     host: config.sql.host,
+    port: config.sql.port,
     user: config.sql.user,
     password: config.sql.password,
     database: config.sql.database,
@@ -21,16 +22,26 @@ function init(){
     if(!config.sql.clearData){
         return ;
     }
-    connection.query(templates.templates.init, (err, res)=>{
-        if(!err){
-            sconsole.mes('000', '数据表创建成功')
+
+    templates.templates.init.forEach((v,i,a)=>{
+        if(i==0){
             return ;
         }
-        sconsole.err('000', err);
+        connection.query(v, (err, res)=>{
+            if(!err){
+                sconsole.mes('000', '数据表更新成功')
+                return ;
+            }
+            sconsole.err('000', err);
+        })
     })
 }
 
 // 增
+//   用户注册
+function register(id, nickname, password){
+    
+}
 
 
 
