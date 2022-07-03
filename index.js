@@ -1,6 +1,7 @@
 /** 自定义组件 */
-const sconsole = new (new require('./modules/sconsole').sconsole)("index.js")
-const sql = require('./modules/sql')
+const sconsole = new (new require('./modules/sconsole.js').sconsole)("index.js")
+const sql = require('./modules/sql.js')
+const route = require('./modules/route.js')
 
 
 
@@ -29,10 +30,18 @@ sql.init()
 
 io.on('connection', socket => {
 
+    socket.on('message', data=>{
+        sconsole.info('000', data)
+    })
+
     socket.on('disconnect', () =>{
         sconsole.info('000', `connection ${socket.id} was closed`)
     })
 
+    socket.on('register', data=>{
+        socket.emit('register', route.register(data))
+        sconsole.mes('000', JSON.stringify(route.register(data)))
+    })
 })
 
 server.listen(3000, () => {

@@ -6,7 +6,10 @@ const templates = require('./sql_template')
 const config = require('../config')
 
 
-let connection = mysql.createConnection({
+
+
+/** 连接配置 */
+let connection = mysql.createPool({
     host: config.sql.host,
     port: config.sql.port,
     user: config.sql.user,
@@ -14,45 +17,35 @@ let connection = mysql.createConnection({
     database: config.sql.database,
 })
 
-// 初始化、链接
-function init(){
-    sconsole.info('000', '正在连接数据库')
-    connection.connect()
-    sconsole.mes('000', '成功连接数据库')
-    if(!config.sql.clearData){
-        return ;
+/** 实现同步操作sql */
+function querySync(sql, values){
+    return new Promise((res, rej) => {
+        connection.getConnection(function(err, conn) {
+            if(err){
+                rej(err)
+            }else{
+                conn.query(sql, values, (err, rows) => {
+                    if(err){
+                        rej(err)
+                    }else{
+                        res(rows)
+                    }
+                })
+            }
+            conn.release()
+        })
+    })
+}
+
+
+async function init(){
+    return
+}
+
+
+
+/** 增 */
+    /** 注册 */
+    async function register(userID, nickname, password){
+        return await querySync(templates.templates)
     }
-
-    templates.templates.init().forEach((v,i,a)=>{
-        connection.query(v, (err, res)=>{
-            if(!err){
-                sconsole.mes('000', '数据表更新成功')
-                return 
-            }
-            sconsole.err('000', err)
-        })
-    })
-}
-
-// 增
-//   用户注册
-function register(id, nickname, password){
-    rets = []
-    templates.templates.register(id, nickname, password).forEach((v,i,a)=>{
-        connection.query(v, (err, res)=>{
-            if(!err){
-                rets.push(res)
-                return 
-            }
-            sconsole.err('000', err)
-        })
-    })
-    return rets
-}
-
-
-
-
-module.exports = {
-    init,
-}

@@ -1,62 +1,101 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta http-equiv="X-UA-Compatible" content="IE=edge">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta http-equiv="Access-Control-Allow-Origin" content="*">
-  <title>Document</title>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>测试页面</title>
+    <script src="https://unpkg.com/vue@next"></script>
+    <script src="http://192.168.2.39/socket.io/socket.io.js"></script>
 </head>
-
 <body>
-  <h1>服务器通信demo 2022.6.8beta 22w60a</h1>
-  <br/>
-  <p>1.幸运指数测试：在下面随机输入一串字符：</p><input type="text" id="msg" /><button onclick="send()">测试</button>
-  <br/>
-  <p>2.留言墙：在下面输入你想说的话：</p><input type="text" id="msgg" /><button onclick="ly()">留言</button>
-  <pre style="background-color: #14d876;" id="lyq">这里是留言墙
+    <div id="app">
+        <h1>welcome</h1>
+        <div id="io">
+            <div class="send">
+                发送
+                <input class="send sendf" id="sendtitle" v-model="sendtitle" />
+                <textarea class="send sendf" id="sendtext" rows="20" v-model="sendvalue">
+{
+                    
+}               </textarea>
+                <button class="send sendf" @click="send">OK</button>
+            </div>
+            <div class="get">
+                接收
+                <pre>{{ gets.join('\n') }}</pre>
 
-  </pre>
-  <br/>
-  <pre style="background-color: #336699;" id="awa">这里是日志
+            </div>
+            <div class="templates">
+                <div class="register">
+                    注册
+                </div>
+            </div>
+        </div>
+    </div>
+    <style>
+        button:hover {
+            color:rgb(118, 118, 118);
+        }
+        #app {
+            display: flex;
+            flex-direction: column;
+        }
 
-  </pre>
-  <script src="http://192.168.2.39/socket.io/socket.io.js"></script>
-  <script>
-    // 客户端创建socket对象，并配置连接服务器url
-    var socket = io('http://192.168.2.39/')
-    
-
-    socket.on('connectx', data=>{
-      if(data){
-        document.getElementById('awa').innerText += "成功与服务器取得联系："+data+'\n'
-        socket.emit('random', '')
-        return ;
-      }
-      document.getElementById('awa').innerText += "服务器未找到"+data+'\n'
-    })
-    socket.on('random', data=>{
-      document.getElementById('awa').innerText += "你今天的幸运指数是："+data+'\n'
-    })
-    socket.on('mess', data=>{
-      document.getElementById('lyq').innerText += data;
-    })
-    socket.on('aly', data=>{
-      document.getElementById('lyq').innerText += data+'\n';
-    })
-    function send() {
-      socket.emit('connectx', document.getElementById('msg').value)
-      document.getElementById('msg').value=''
-    }
-    function ly(){
-      socket.emit('aly', document.getElementById('msgg').value)
-      document.getElementById('msgg').value=''
-    }
-
-
-    
-  </script>
+        #io{
+            display: flex;
+            flex-direction: row;
+        }
+        .send{
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+            background-color: #0081b444;
+            
+        }
+        .get {
+            display: flex;
+            flex-direction: column;
+            width: 90%;
+            background-color: #00b47844;
+        }
+        .sendf{
+            margin: 5px;
+            border-width: 1px;
+            border-style: solid;
+            border-color: -internal-light-dark(rgb(118, 118, 118), rgb(133, 133, 133));
+            border-image: initial;
+            font-family: 'Lucida Console';
+        }
+    </style>
 </body>
-
+<script>
+    const pg = {
+        data() {
+            return {
+                socket: io('http://192.168.2.39/'),
+                sendtitle: '',
+                sendvalue: '',
+                gets: [],
+                socketMesList: [
+                    'register',
+                ]
+            }
+        },
+        mounted(){
+            for(i of this.socketMesList){
+                this.socket.on(i, data=>{
+                    this.gets.unshift(typeof(data)=='object'?JSON.stringify(data):data);
+                })
+            }
+        },
+        methods: {
+            send() {
+                this.socket.emit(this.sendtitle, this.sendvalue)
+            }
+        }
+    }
+    
+    Vue.createApp(pg).mount('#app')
+</script>
 </html>
